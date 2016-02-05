@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask import request
 import ast
+import json
 import predictor
 
 app = Flask(__name__)
@@ -18,10 +19,15 @@ def estimate():
       try:
           data = ast.literal_eval(request.data.decode("utf-8"));
           data = data["input"];
-          rv = predictor.predict(data);
-          return(str(rv));
-      except Error as e:
-          return(str(e));
+          vec,ans = predictor.predict(data);
+          rv = json.dumps({"vec":vec,"ans":str(ans)});
+          return(rv);
+      except Exception as ex:
+          print(str(ex));
+          return(str(ex)); 
+      except Error as er:
+          print(str(er));
+          return(str(er));
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

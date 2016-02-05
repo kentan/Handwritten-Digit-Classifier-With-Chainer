@@ -72,7 +72,11 @@
 	                contentType: 'application/json',
 	                success: function(result) {
 	                    console.log(result);
-	                    $("#estimated").text("Estimated = " + result);
+                            result = JSON.parse(result);
+	                    $("#estimated").text("Estimated = " + result.ans);
+                            vec = result.vec.toString();
+                            vec = vec.replace(/,/g,"</br>");
+                            $("#output_vector").html("<h1>Output vector :</h1></br> " + vec);
 	                }
 	            });
 	        };
@@ -116,6 +120,7 @@
     <canvas id="canvas"></canvas>
   </div>
   <input id="delete_button" type="button" value="delete" />
+  <div id="output_vector"></div>
 <body>
 </html>
 

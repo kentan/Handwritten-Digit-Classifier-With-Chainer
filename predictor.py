@@ -32,7 +32,7 @@ def predict(input_data):
 	prepared_data = prepare(input_data);
 	x = chainer.Variable(np.asarray(prepared_data),volatile='on')
 	y = model.predictor(x);
-	return np.argmax(y.data);
+	return y.data[0].tolist(),np.argmax(y.data);
 
 
 
