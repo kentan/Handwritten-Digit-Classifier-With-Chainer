@@ -27,12 +27,18 @@ def prepare(value):
         rv[0] = value;
         return rv;
 
+def normalize(data):
+        base = abs(2.0 * data[np.argmin(data)]);
+     
+        total = sum(data) + base * len(data);
+        normalized_data = map(lambda x : (x + base)/total,data);
+        return list(normalized_data);
 
 def predict(input_data):
 	prepared_data = prepare(input_data);
 	x = chainer.Variable(np.asarray(prepared_data),volatile='on')
 	y = model.predictor(x);
-	return y.data[0].tolist(),np.argmax(y.data);
+	return normalize(y.data[0].tolist()),np.argmax(y.data);
 
 
 

@@ -62,7 +62,32 @@
 	        $("#delete_button").click(function(){
 	            context.clearRect(0,0,280,280);
 	        });
+               
+                var makeSortedCandidates = function(arr){
+                    var copied = arr.slice(0);
+                    arr.sort(function(a, b){return b-a});
+                    var candidates = [];
+                    for(var i = 0; i < arr.length; i++){
+                        var v = arr[i];
+                        var n = copied.indexOf(v);
+                        candidates.push([v,n]);
+                    }
+                    return candidates;
 
+                }
+                var makeOutputVectorMessage = function(arr){
+                   var vec = makeSortedCandidates(arr);
+                   var str = "";
+                   for(var i = 0; i < vec.length; i++){
+                       str += "<font size=5>" + 
+                          vec[i][1] + 
+                          "</font>" +
+                          "&nbsp;&nbsp;&nbsp;&nbsp;" + 
+                          vec[i][0] + 
+                          "</br>";
+                   }
+                   return str;
+                }
 	        var estimate = function(context) {
 	            var img_buf = getImageBuffer(context, 28, 28);
 	            $.ajax({
@@ -71,12 +96,15 @@
 	                data: JSON.stringify({"input": img_buf}),
 	                contentType: 'application/json',
 	                success: function(result) {
-	                    console.log(result);
                             result = JSON.parse(result);
-	                    $("#estimated").text("Estimated = " + result.ans);
-                            vec = result.vec.toString();
-                            vec = vec.replace(/,/g,"</br>");
-                            $("#output_vector").html("<h1>Output vector :</h1></br> " + vec);
+                            console.log(result);
+	                    $("#predicted").html(result.ans);
+                            var vec = result.vec;
+                            vec = makeOutputVectorMessage(vec);
+                              
+                            //vec = vec.replace(/,/g,"</br>");
+                            $("#output_vector").html("<font size='6'>Probability</font></br> " + vec);
+                            $("#output_vector").css("visibility","visible");
 	                }
 	            });
 	        };
@@ -104,23 +132,42 @@
   </script>
 
     <style type="text/css">
-	.title {padding:10px; margin-top:44px;}
-	.main {padding-left:10px; margin:auto;}
-
-
-	.canvas_area {width:280px; height:280px; border:1px solid #ccc;}
-	.canvas_area canvas {width:280px; height:280px;}
-  
+	canvas {
+          width:280px; 
+          height:280px; 
+          border:1px solid #000000;}
+         
+        .flex_container {
+          display: flex;
+          padding:5px;
+        } 
+        .flex_item {
+          padding:15px;
+          margin-top:15px;
+        }
+        .vec {
+          height:375px;
+          border:1px solid #000000;
+          background:#C6E2FF;
+          visibility: hidden;
+        } 
   </style>
+  <title>The handwritten digit classifier</title>
 </head>
 <body onload='_onload()'>
-  <p id="estimated">estimated = not yet</p>
-  draw number here ↓</br>
-  <div class="canvas_area">
-    <canvas id="canvas"></canvas>
+  <div class="flex_container">
+    <div class="flex_item">
+      <font size="6">Handwritten digit classifier.</font></br>
+      Write the single digit from 0 to 9 on the canvas.</br>
+      The Predicted Value is <font size = 6 id="predicted">...</font>
+      </br>
+      <hr/>
+      <canvas id="canvas"></canvas></br>
+      <input id="delete_button" type="button" value="clear" />
+    </div>
+    <div class="flex_item vec" id="output_vector"></div>
   </div>
-  <input id="delete_button" type="button" value="delete" />
-  <div id="output_vector"></div>
 <body>
 </html>
+
 

@@ -20,6 +20,7 @@ def estimate():
           data = ast.literal_eval(request.data.decode("utf-8"));
           data = data["input"];
           vec,ans = predictor.predict(data);
+          print(vec);
           rv = json.dumps({"vec":vec,"ans":str(ans)});
           return(rv);
       except Exception as ex:
